@@ -11,10 +11,15 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     var itemArray = ["First item to do", "Second item to do", "Third item to do"]
+    let defaults = UserDefaults.standard
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] { //if there is an array in the User Defaults
+            itemArray = items
+        }
         
        
         // Do any additional setup after loading the view.
@@ -40,9 +45,9 @@ class TodoListViewController: UITableViewController {
         print(itemArray[indexPath.row])
         
         if tableView.cellForRow(at: indexPath)?.accessoryType != .checkmark {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        } else {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+        } else {
+            tableView.cellForRow(at: indexPath)?.accessoryType = .none
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
@@ -59,6 +64,9 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction(title: "Add Item", style: .default) { (action) in
             //what will happen once the user clicks the Add Item button on UI Alert
             self.itemArray.append(textField.text!) //force-unwrapping the text
+            
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
+            
             self.tableView.reloadData()
         }
         
