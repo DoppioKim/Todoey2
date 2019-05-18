@@ -18,6 +18,7 @@ class CategoryViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         loadCategory()
 
@@ -38,6 +39,21 @@ class CategoryViewController: UITableViewController {
         return cell
     }
     
+    //MARK: - TableView Delegate Methods
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: "goToItems", sender: self)
+
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let destinationVC = segue.destination as! TodoListViewController
+        
+        if let indexPath = tableView.indexPathForSelectedRow {
+            destinationVC.selectedCategory = categoryArray[indexPath.row]
+        }
+
+    }
     
     //MARK: - Data Manipulation Methods
     //save and load data
@@ -66,17 +82,6 @@ class CategoryViewController: UITableViewController {
         tableView.reloadData()
     }
     
-//    func loadCategory(request: NSFetchRequest<Category>) {
-//
-//        do {
-//            categoryArray = try context.fetch(request)
-//        } catch {
-//            print ("error fetching/loading category, \(error)")
-//        }
-//
-//        tableView.reloadData()
-//
-//    }
     
     //MARK: - Add New Categories
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -92,6 +97,7 @@ class CategoryViewController: UITableViewController {
             self.tableView.reloadData()
             
             self.saveCategory()
+            
         }
         
         
